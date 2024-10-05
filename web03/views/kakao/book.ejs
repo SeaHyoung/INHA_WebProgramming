@@ -1,0 +1,109 @@
+<div>
+    <!-- class 이름들 모두 bootstrap에서 제공하는 것 -->
+    <!-- my: 마진(최대 5) md: 아래마진-->
+    <h1 class="text-center my-5"><%=title%></h1>
+    <div class="row">
+        <!-- col은 최대 12개 / md(middle=12칸중 4칸 차지) sm(small=12칸중 1칸 차지) -->
+        <form name="frm" class="col-md-4">
+            <!-- input-group: input 상자와 button 그룹 -->
+            <div class="input-group">
+                <input name="query" class="form-control" value="Node.js" />
+                <button class="btn btn-success">검색</button>
+                <!--btn-primary: 버튼 파랑색 -->
+            </div>
+        </form>
+        <div class="col pt-2">
+            <span id="total">1건</span>
+        </div>
+    </div>
+    <hr />
+
+    <!-- 도서검색 결과 출력 공간 -->
+    <div id="div_list"></div>
+
+    <div class="text-center">
+        <button id="prev" class="btn btn-primary btn-sm">이전</button>
+        <span id="page" class="mx-3">1</span>
+        <button id="next" class="btn btn-primary btn-sm">다음</button>
+    </div>
+
+    <!-- 도서검색 결과 출력 템플릿 -->
+    <script type="x-handlebars-template" id="temp_list">
+        <!-- 테이블 출력 -->
+        <table class="table table-striped">
+
+          <!--#each: documents안에 있는 내용을 반복한다. -->
+          {{#each documents}}
+            <tr>
+              <td><img src="{{fncImage thumbnail}}" width="30"></td>
+              <td>{{title}}</td>
+              <td>{{price}}</td>
+              <td>{{authors}}</td>
+            </tr>
+          {{/each}}
+        </table>
+    </script>
+
+    <script>
+        Handlebars.registerHelper("fncImage", function (image) {
+            if (image) {
+                return image;
+            } else {
+                return "/images/no_image.png";
+            }
+        });
+    </script>
+</div>
+<script>
+    let page = 1;
+    let size = 5;
+    getList();
+    $(frm).on("submit", function (e) {
+        e.preventDefault();
+        if ($(frm.query).val() == "") {
+            alert("검색어를 입력하세요!");
+            $(frm.query).focus();
+            return;
+        }
+        page = 1;
+        getList();
+    });
+
+    $("#prev").on("click", function () {
+        page--;
+        getList();
+    });
+
+    $("#next").on("click", function () {
+        page++;
+        getList();
+    });
+
+    function getList() {
+        let query = $(frm.query).val();
+        
+        //$: jquary(index.ejs head에 script 가져옴), ajax: api가져오기 메서드 
+        $.ajax({
+            type: "get",
+            url: `https://dapi.kakao.com/v3/search/book?target=title&size=${size}&query=${query}&page=${page}`,
+            headers: {
+                Authorization: "KakaoAK 54b6688221dead45827042df7e297c2d",
+            },
+            success: function (data) {
+                //console.log(data);
+                const temp = Handlebars.compile($("#temp_list").html());
+                $("#div_list").html(temp(data));
+
+                $("#total").html(data.meta.pageable_count);
+                const last = Math.ceil(data.meta.pageable_count / size);
+                $("#page").html(`${page}/${last}`);
+                if (page == 1) $("#prev").attr("disabled", true);
+                else $("#prev").attr("disabled", false);
+
+                const is_end = data.meta.is_end;
+                if (is_end) $("#next").attr("disabled", true);
+                else $("#next").attr("disabled", false);
+            },
+        });
+    }
+</script>
