@@ -1,0 +1,101 @@
+<div class="row">
+    <h1 class="text-center my-5"><%=title%></h1>
+    <div class="row mb-2">
+        <form name="frm" class="col-6 col-md-4">
+            <div class="input-group">
+                <input name="query" class="form-control" value="자바" />
+                <button class="btn btn-primary">검색</button>
+            </div>
+        </form>
+    </div>
+    <div id="div_list" class="row"></div>
+    <div class="text-center">
+        <button id="prev" class="btn btn-primary">이전</button>
+        <span id="page" class="mx-3">1</span>
+        <button id="next" class="btn btn-primary">다음</button>
+    </div>
+    <script id="temp_list" type="x-handlebars-template">
+        {{#each documents}}
+            <div class="col-6 col-md-3 col-lg-2 mb-3">
+                <div class="card">
+                <div class="card-body">
+                    <a href="/kakao/book/info?title={{title}}&thumbnail={{thumbnail}}&price={{price}}&authors={{authors}}&publisher={{publisher}}&isbn={{isbn}}">
+                    <img src="{{funThumbnail thumbnail}}" width="100%">
+                    </a>
+                </div>
+                <div class="card-footer" style="font-size:12px;">
+                    <div class="ellipsis">{{title}}</div>
+                    <div>{{price}}원</div>
+                </div>
+                </div>
+            </div>
+        {{/each}}
+    </script>
+    <script>
+        //위에서 함수를 실행함 "funThumbnail" 부분이 비워져 있어도 빈칸 채울줄 알아야 함.
+        Handlebars.registerHelper("funThumbnail", function (thumbnail) {
+            if (thumbnail) return thumbnail;
+            else return "http://via.placeholder.com/120x180";
+        });
+    </script>
+</div>
+<script>
+    let query = "자바";
+    let size = 12;
+    let page = 1;
+
+    getList();
+
+    $(frm).on("submit", function (e) {
+        e.preventDefault();
+        query = $(frm.query).val();
+        if (query == "") {
+            alert("검색어를 입력하세요!");
+        } else {
+            page = 1;
+            getList();
+        }
+    });
+
+    $("#div_list").on("click", "img", function () {
+        location.href = "/kakao/book/info";
+    });
+
+    $("#next").on("click", function () {
+        page++;
+        getList();
+    });
+    $("#prev").on("click", function () {
+        page--;
+        getList();
+    });
+    //도서목록 함수
+    function getList() {
+        //카카오 API문서를 보면 url, query, Authorization등등 어떻게 넣어줘야 하는지 기술되어있음.
+        // $는 jquery 딸깍
+        $.ajax({
+            //get은 카카오API문서에 호출방식이 get으로 적혀있기 때문.
+            type: "get",
+            url: "https://dapi.kakao.com/v3/search/book?target=title",
+            data: { query: query, size: size, page }, //query 에는 검색어가 들어감
+            headers: {
+                Authorization: "KakaoAK 0b91218c084a28358b5d595792a6932d",
+            },
+            success: function (data) {
+                //호출 성공시 실행.
+                console.log(data);
+                const temp = Handlebars.compile($("#temp_list").html());
+                $("#div_list").html(temp(data));
+
+                const last = Math.ceil(data.meta.pageable_count / size);
+                $("#page").html(`${page}/${last}`);
+
+                if (page == 1) $("#prev").attr("disabled", true);
+                else $("#prev").attr("disabled", false);
+
+                if (data.meta.is_end) $("#next").attr("disabled", true);
+                else $("#next").attr("disabled", false);
+            },
+        });
+    }
+</script>
