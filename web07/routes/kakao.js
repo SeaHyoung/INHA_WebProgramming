@@ -23,6 +23,7 @@ router.get("/blog", function (req, res) {
 //     res.render("index", { title: "도서정보", pageName: "kakao/info.ejs" });
 // });
 router.get("/book/info", function (req, res, next) {
+    //오브젝트로 정의
     const info = {
         title: req.query.title,
         thumbnail: req.query.thumbnail,

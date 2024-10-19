@@ -1,5 +1,5 @@
 <div class="row">
-    <h1 class="text-center my-5">홈페이지</h1>
+    <h1 class="text-center my-5"><%=title%></h1>
 
     <div class="row mb-2">
         <form name="frm" class="col-6 col-md-4">
@@ -16,13 +16,17 @@
         <span id="page" class="mx-3">1</span>
         <button id="next" class="btn btn-primary">다음</button>
 
+        <!--  id-div_list에 출력할 내용 -->
         <script id="temp_list" type="x-handlebars-template">
             {{#each documents}}
                 <div class="col-6 col-md-3 col-lg-2 mb-3">
                     <div class="card">
-                        <div class="card body">
+                        <div class="card-body">
                             <!-- <a href="/kakao/book/info"></a> -->
+                            <a href="/kakao/book/info?title={{title}}&thumbnail={{thumbnail}}&price={{price}}&authors={{authors}}&publisher={{publisher}}&isbn={{isbn}}">
+                            <!-- 이미지가 없을 때 function_Thumbnail로, 아니면 tumbnail 출력 -->
                             <img src="{{funThumbnail thumbnail}}" width="100%">
+                            </a>
                         </div>
                         <div class="card-footer" style="font-size:12px">
                             <div class="ellipsis">{{title}}</div>
@@ -93,8 +97,8 @@
 
                 $("#page").html(`${page}/${last}`);
 
-                if (page == 1) $("#page").attr("disabled", true);
-                else $("#page").attr("disabled", false);
+                if (page == 1) $("#prev").attr("disabled", true);
+                else $("#prev").attr("disabled", false);
                 if (data.meta.is_end) $("#next").attr("disabled", true);
                 else $("#next").attr("disabled", false);
             },
