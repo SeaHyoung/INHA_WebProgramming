@@ -1,45 +1,63 @@
-<div class="row">
+<div>
     <h1 class="text-center my-5"><%=title%></h1>
-    <div class="row mb-2">
-        <form name="frm" class="col-6 col-md-4">
+    <div class="row">
+        <!-- col-md-4 : 컬럼이 12칸 중에서 미들 해상도인 경우 4칸 사용 -->
+        <form name="frm" class="col-md-4 mb-3">
             <div class="input-group">
-                <input name="query" class="form-control" value="자바" />
+                <input name="query" class="form-control" value="Node.js" />
                 <button class="btn btn-primary">검색</button>
             </div>
         </form>
+        <!-- <div class="col pt-2">
+    <span id="total">1건</span>
+    </div> -->
     </div>
-    <div id="div_list" class="row"></div>
+    <hr />
+    <div id="div_list"></div>
     <div class="text-center">
-        <button id="prev" class="btn btn-primary">이전</button>
+        <button id="prev" class="btn btn-primary btn-sm">이전</button>
         <span id="page" class="mx-3">1</span>
-        <button id="next" class="btn btn-primary">다음</button>
+        <button id="next" class="btn btn-primary btn-sm">다음</button>
     </div>
-    <script id="temp_list" type="x-handlebars-template">
-        {{#each documents}}
-            <div class="col-6 col-md-3 col-lg-2 mb-3">
-                <div class="card">
-                <div class="card-body">
-                    <!-- ?: 변수 지정 / = : 변수 대입 -->
-                    <a href="/kakao/book/info?title={{title}}&thumbnail={{thumbnail}}&price={{price}}&authors={{authors}}&publisher={{publisher}}&isbn={{isbn}}">
-                    <img src="{{funThumbnail thumbnail}}" width="100%">
-                    </a>
-                </div>
-                <div class="card-footer" style="font-size:12px;">
-                    <div class="ellipsis">{{title}}</div>
-                    <div>{{price}}원</div>
-                </div>
-                </div>
-            </div>
-        {{/each}}
+    <script type="x-handlebars-template" id="temp_list">
+        <table class="table">
+            {{#each documents}}
+                <tr>
+                    <td><img src="{{funThumbnail thumbnail}}" width="50px"></td>
+                    <td><div class="ellipsis">{{title}}</div></td>
+                    <td>{{price}}</td>
+                    <td>{{authors}}</td>
+                    <td width="70"><%-include('modal_book.ejs')%></td>
+                    <td width="70"><button class="btn btn-success btn-sm cart" book="{{strBook @this}}">카트</button></td>
+                </tr>
+            {{/each}}
+        </table>
     </script>
     <script>
-        //위에서 함수를 실행함 "funThumbnail" 부분이 비워져 있어도 빈칸 채울줄 알아야 함.
+        Handlebars.registerHelper("fncImage", function (image) {
+            if (image) {
+                return image;
+            } else {
+                return "/images/no_image.png";
+            }
+        });
+    </script>
+    <script>
+        Handlebars.registerHelper("strBook", function (book) {
+            return JSON.stringify(book);
+        });
+    </script>
+    <script>
         Handlebars.registerHelper("funThumbnail", function (thumbnail) {
-            if (thumbnail) return thumbnail;
-            else return "http://via.placeholder.com/120x180";
+            if (thumbnail) {
+                return thumbnail;
+            } else {
+                return "/images/no_image.png";
+            }
         });
     </script>
 </div>
+
 <script>
     let query = "자바";
     let size = 12;

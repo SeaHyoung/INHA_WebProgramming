@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+//require == import / 아래 코드는 js 파일을 의미
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
