@@ -1,0 +1,48 @@
+<div class="row my-5 justify-content-center">
+    <!-- row 가운데 정렬: justify-content-center -->
+    <div class="col-10 col-mid-6 col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h3><%=title%></h3>
+            </div>
+            <div class="card-body">
+                <form name="frm">
+                    <input class="form-control mb-3" name="email" />
+                    <input
+                        type="password"
+                        class="form-control mb-3"
+                        name="pass"
+                    />
+                    <button class="btn btn-primary w-100">회원가입</button>
+                </form>
+                <div class="text-end mt-3">
+                    <a href="/users/login">로그인</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { app } from "/javascripts/config.js";
+    import {
+        getAuth,
+        createUserWithEmailAndPassword,
+    } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    const auth = getAuth(app);
+
+    $(frm).on("submit", function (e) {
+        e.preventDefault();
+        const email = $(frm.email).val();
+        const pass = $(frm.pass).val();
+
+        createUserWithEmailAndPassword(auth, email, pass)
+            .then((success) => {
+                alert("사용자 이메일이 등록되었습니다.");
+                location.href = "/users/login";
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    });
+</script>
