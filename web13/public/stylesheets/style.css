@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Jua&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Grandiflora+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbit&display=swap");
+
+* {
+    /* font-family: "Jua", sans-serif;
+    font-weight: 400;
+    font-style: normal; */
+
+    /* font-family: "Grandiflora One", cursive;
+    font-weight: bolder;
+    font-style: normal; */
+
+    font-family: "Orbit", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /*한줄 보여주고 점점점...*/
+    -webkit-box-orient: vertical;
+}
+
+.ellipsis2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /*한줄 보여주고 점점점...*/
+    -webkit-box-orient: vertical;
+}
